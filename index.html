@@ -1030,14 +1030,30 @@ create policy "Update app_state" on app_state for update using (true);</pre>
         if (authMode === 'login') {
             let profile;
             if (supabaseClient) {
-                const { data, error } = await supabaseClient.from(PROFILES_TABLE).select('*').eq('username', username).maybeSingle();
+                // Case-insensitive: the football site stores usernames with mixed case (e.g. "Yadav"),
+                // but this app always lowercases what's typed — ilike matches regardless of case.
+                const { data, error } = await supabaseClient.from(PROFILES_TABLE).select('*').ilike('username', username).maybeSingle();
                 if (error) return showAuthError('Could not reach the database. Try again.');
                 profile = data;
             } else {
-                profile = appState.profiles.find(p => p.username === username);
+                profile = appState.profiles.find(p => p.username.toLowerCase() === username);
             }
             if (!profile) return showAuthError('Account not found.');
-            if (profile.pin_hash && profile.pin_hash !== pinHash) return showAuthError('Incorrect PIN.');
+
+            if (!profile.pin_hash) {
+                // This account was created on the other site (no PIN set yet there) — the PIN just
+                // entered becomes their PIN here, going forward, instead of silently accepting any PIN.
+                if (supabaseClient) {
+                    const { error: setErr } = await supabaseClient.from(PROFILES_TABLE).update({ pin_hash: pinHash }).eq('username', profile.username);
+                    if (setErr) return showAuthError('Could not set your PIN. Try again.');
+                }
+                profile.pin_hash = pinHash;
+                if (!supabaseClient) saveAppState();
+                showToast('PIN set for your account — use it to log in from now on.', 'info');
+            } else if (profile.pin_hash !== pinHash) {
+                return showAuthError('Incorrect PIN.');
+            }
+
             if (!profile.approved) return showToast('Account pending admin approval', 'warning');
 
             // Never keep the current-user object (which may carry pin_hash) with the hash attached in storage.
@@ -1061,13 +1077,13 @@ create policy "Update app_state" on app_state for update using (true);</pre>
             };
 
             if (supabaseClient) {
-                const { data: existing } = await supabaseClient.from(PROFILES_TABLE).select('username').eq('username', username).maybeSingle();
+                const { data: existing } = await supabaseClient.from(PROFILES_TABLE).select('username').ilike('username', username).maybeSingle();
                 if (existing) return showAuthError('Username already taken.');
                 const { error } = await supabaseClient.from(PROFILES_TABLE).insert(newProfile);
                 if (error) return showAuthError('Registration failed: ' + error.message);
                 await refreshProfilesFromSupabase();
             } else {
-                if (appState.profiles.some(p => p.username === username)) return showAuthError('Username already taken.');
+                if (appState.profiles.some(p => p.username.toLowerCase() === username)) return showAuthError('Username already taken.');
                 appState.profiles.push(newProfile);
                 saveAppState();
             }
