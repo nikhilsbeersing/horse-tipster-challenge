@@ -539,15 +539,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label class="text-xs text-slate-400 block mb-1 font-semibold">Meeting Name</label>
-                        <input type="text" id="adminMeetingName" value="Meeting 1" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
+                        <input type="text" id="adminMeetingName" placeholder="e.g. Meeting 1" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 block mb-1 font-semibold">Race Number</label>
-                        <input type="number" id="adminRaceNum" min="1" max="9" value="1" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
+                        <input type="number" id="adminRaceNum" min="1" max="9" placeholder="e.g. 1" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 block mb-1 font-semibold">Distance & Class</label>
-                        <input type="text" id="adminRaceMeta" value="1400m | Benchmark 60" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
+                        <input type="text" id="adminRaceMeta" placeholder="e.g. 1400m | Benchmark 60" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-xs text-white">
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 block mb-1 font-semibold">Race Post Time</label>
@@ -558,9 +558,6 @@
                 <div>
                     <div class="flex items-center justify-between mb-1">
                         <label class="text-xs text-slate-400 font-semibold">Paste Raw Data (Single-space, Multi-space, or Tab Delimited)</label>
-                        <button onclick="fillSampleImportData()" class="text-xs text-amber-400 hover:underline flex items-center gap-1 font-bold">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Load Sample Snippet
-                        </button>
                     </div>
                     <textarea id="adminRawCardData" rows="6" placeholder="Paste snippet here..." class="w-full bg-slate-950 border border-slate-700 rounded p-3 text-xs font-mono text-slate-200 focus:ring-amber-500 custom-scrollbar"></textarea>
                 </div>
@@ -836,29 +833,8 @@ create policy "Update app_state" on app_state for update using (true);</pre>
     let currentStablesSubView = 'stables';
 
     let appState = JSON.parse(localStorage.getItem(STORAGE_KEY_STATE)) || {
-        meetings: [
-            { id: 'm1', name: 'Meeting 1', season: '2026', status: 'UPCOMING' }
-        ],
-        races: [
-            {
-                id: 'r1',
-                meetingId: 'm1',
-                raceNumber: 1,
-                distance: '1600m',
-                raceClass: 'Benchmark 50',
-                scheduledTime: new Date(Date.now() + 86400000).toISOString(),
-                status: 'UPCOMING',
-                winners: [],
-                runners: [
-                    { no: 1, horse: 'SINGLETON SAM', age: 4, trainer: 'V ALLET', equip: 'NA', weight: 60.5, allowance: '', jockey: 'R CURATOLO', draw: 4, rating: 55, lastRun: 'NEW', treatments: 'Twyblid', odds: 16.0, finalOdds: 16.0 },
-                    { no: 2, horse: 'WAR CHARIOT', age: 6, trainer: 'A NAGADOO', equip: 'A', weight: 60.0, allowance: '', jockey: 'B LOUIS', draw: 2, rating: 54, lastRun: '470', treatments: '-', odds: 2.50, finalOdds: 2.50 },
-                    { no: 3, horse: 'MONUMENTAL', age: 6, trainer: 'GUJADHUR', equip: 'NA', weight: 59.0, allowance: '', jockey: 'R DANIELSON', draw: 5, rating: 52, lastRun: '436', treatments: '-', odds: 10.0, finalOdds: 10.0 },
-                    { no: 4, horse: 'SALT \'N PEPPA', age: 5, trainer: 'C HEWITSON', equip: 'ENA', weight: 59.0, allowance: '', jockey: 'M NUNES', draw: 3, rating: 52, lastRun: '482', treatments: '-', odds: 2.20, finalOdds: 2.20 },
-                    { no: 5, horse: 'ISIKWISHIKWISHI', age: 5, trainer: 'J AWOTAR', equip: 'A', weight: 58.0, allowance: '', jockey: 'G VAN NIEKERK', draw: 1, rating: 50, lastRun: '500', treatments: 'Twyblid', odds: 5.50, finalOdds: 5.50 },
-                    { no: 6, horse: 'WORLD OF PLEASURE', age: 5, trainer: 'A NAGADOO', equip: 'SXA', weight: 57.5, allowance: '-4kg', jockey: 'Y APPOU', draw: 6, rating: 49, lastRun: '467', treatments: '-', odds: 35.0, finalOdds: 35.0 }
-                ]
-            }
-        ],
+        meetings: [],
+        races: [],
         predictions: {},
         // No pre-created tipster accounts — the only seed account is the admin below.
         // Real tipsters sign up themselves (or are added via Admin > User Accounts).
@@ -1771,17 +1747,6 @@ create policy "Update app_state" on app_state for update using (true);</pre>
         document.getElementById('inspectorModal').classList.add('hidden');
     }
 
-    function fillSampleImportData() {
-        const sample = `1 SINGLETON SAM 4 V ALLET NA 60.5 R CURATOLO 4 55 NEW Twyblid 1600
-2 WAR CHARIOT 6 A NAGADOO A 60 B LOUIS 2 54 470 - 250
-3 MONUMENTAL 6 GUJADHUR NA 59 R DANIELSON 5 52 436 - 1000
-4 SALT 'N PEPPA 5 C HEWITSON ENA 59 M NUNES 3 52 482 - 220
-5 ISIKWISHIKWISHI 5 J AWOTAR A 58 G VAN NIEKERK 1 50 500 Twyblid 550
-6 WORLD OF PLEASURE 5 A NAGADOO SXA 57.5(-4) Y APPOU 6 49 467 - 3500`;
-
-        document.getElementById('adminRawCardData').value = sample;
-    }
-
     // MULTI-PATTERN PARSER FOR RAW MAURITIUS DATA INCLUDING WEIGHT ALLOWANCE
     function parseMauritiusRawLine(line) {
         line = line.trim();
@@ -2008,6 +1973,15 @@ create policy "Update app_state" on app_state for update using (true);</pre>
         showToast(`Race ${race.raceNumber} settled with ${selectedWinners.length} winner(s)!`, 'success');
     }
 
+    // Converts a stored UTC ISO timestamp into the local "YYYY-MM-DDTHH:mm" format
+    // that <input type="datetime-local"> expects, so the field displays (and re-saves)
+    // the correct local time instead of drifting by the timezone offset.
+    function toDatetimeLocalValue(isoString) {
+        const d = new Date(isoString);
+        const pad = n => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
     // RACE ACCORDION EDITOR & DELETION
     function renderAdminAccordion() {
         const container = document.getElementById('adminRacesAccordion');
@@ -2047,7 +2021,7 @@ create policy "Update app_state" on app_state for update using (true);</pre>
                         </div>
                         <div>
                             <label class="text-slate-400 block mb-1">Scheduled Time</label>
-                            <input type="datetime-local" id="edit_time_${r.id}" value="${r.scheduledTime.slice(0,16)}" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white">
+                            <input type="datetime-local" id="edit_time_${r.id}" value="${toDatetimeLocalValue(r.scheduledTime)}" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white">
                         </div>
                     </div>
 
