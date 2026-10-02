@@ -51,7 +51,7 @@
 
 <!-- Application Structure Plan:
      1. Header & Bankroll Tracker: Sticky top navigation displaying active session, current user points, global 5,000 pts balance bar, auto-save feedback badge, and status indicators.
-     2. Racecard & Staking Workspace: Interactive card-by-card prediction builder featuring field overview, runner stats with jockey weight allowances (e.g., 57.5kg -4kg), visual Win Probability bars (odds hidden from tipster), direct "Stake" input with quick-selection chips (100, 200, 300, 500, 1000 or custom), auto-save triggers on pick selection, and optional Doubles/Trebles builders.
+     2. Racecard & Quantity Workspace: Interactive card-by-card prediction builder featuring field overview, runner stats with jockey weight allowances (e.g., 57.5kg -4kg), visual Win Probability bars (odds hidden from tipster), direct "Quantity" input with quick-selection chips (100, 200, 300, 500, 1000 or custom), auto-save triggers on pick selection, and optional Doubles/Trebles builders.
      3. Stables & Jockeys Analytics Tab: Detailed breakdown of all horses categorized by Stable (Trainer) and Jockey, showing calculated win probabilities, runner counts, average win % expectation, and interactive Chart.js distributions.
      4. Leaderboard & Performance Analytics: Overall and Meeting-specific ranking tables with separate Single / Double / Treble stats breakdowns, pick inspection modal, and Chart.js performance charts.
      5. Admin Workspace: Data Importer for single-space or tabbed raw Mauritius racecards, Race Accordion Editor, Race Deletion tool, Final Tote Odds & Dead-Heat result settler, and User Management tab categorized by role (Tipsters vs Admins).
@@ -120,6 +120,12 @@
         <button onclick="switchTab('stables')" id="tabBtn-stables" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
             <i class="fa-solid fa-warehouse"></i> Stables & Jockeys
         </button>
+        <button onclick="switchTab('analysis')" id="tabBtn-analysis" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-bullseye"></i> Race Analysis
+        </button>
+        <button onclick="switchTab('oddsevo')" id="tabBtn-oddsevo" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-arrow-trend-up"></i> Odds Evolution
+        </button>
         <button onclick="switchTab('leaderboard')" id="tabBtn-leaderboard" class="tab-btn px-4 py-3 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
             <i class="fa-solid fa-chart-line"></i> Leaderboard & Analytics
         </button>
@@ -165,7 +171,7 @@
         </div>
     </div>
 
-    <!-- VIEW 1: RACECARD & STAKING WORKSPACE -->
+    <!-- VIEW 1: RACECARD & QUANTITY WORKSPACE -->
     <section id="view-racecard" class="tab-content space-y-6">
         <!-- Section Introduction -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
@@ -173,7 +179,7 @@
                 <i class="fa-solid fa-horse text-amber-400"></i> Racecard & Predictions Workspace
             </h2>
             <p class="text-xs text-slate-400 leading-relaxed">
-                Explore scheduled races for the active meeting. Select your horse pick and set your stake (min 100 pts). Picks auto-save instantly. Jockey allowances (e.g. 57.5kg -4kg) are indicated clearly under weight columns. Combination bets (Doubles and Trebles) are optional.
+                Explore scheduled races for the active meeting. Select your horse pick and set your quantity (min 100 pts). Picks auto-save instantly. Jockey allowances (e.g. 57.5kg -4kg) are indicated clearly under weight columns. Combinations (Doubles and Trebles) are optional.
             </p>
         </div>
 
@@ -200,23 +206,23 @@
             <!-- Dynamically Rendered Race Cards -->
         </div>
 
-        <!-- EXOTIC BETS SECTION (OPTIONAL DOUBLES & TREBLES) -->
+        <!-- EXOTIC COMBINATIONS SECTION (OPTIONAL DOUBLES & TREBLES) -->
         <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 space-y-4 shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="text-base font-extrabold text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-layer-group"></i> Optional Combination Bets (Doubles & Trebles)
+                    <i class="fa-solid fa-layer-group"></i> Optional Combinations (Doubles & Trebles)
                 </h3>
                 <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded font-bold">OPTIONAL • Min 100 pts per combo</span>
             </div>
             <p class="text-xs text-slate-400">
-                You can use any unallocated bankroll points to construct multi-leg accumulator bets. Choices save automatically on selection.
+                You can use any unallocated bankroll points to construct multi-leg accumulators. Choices save automatically on selection.
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Double Bet Card -->
+                <!-- Double Card -->
                 <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-slate-200"><i class="fa-solid fa-dice-two text-amber-400 mr-1"></i> Double Bet</span>
+                        <span class="font-bold text-sm text-slate-200"><i class="fa-solid fa-dice-two text-amber-400 mr-1"></i> Double</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-xs">
                         <div>
@@ -233,18 +239,18 @@
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 font-semibold block mb-1">Stake:</label>
+                        <label class="text-xs text-slate-400 font-semibold block mb-1">Quantity:</label>
                         <div class="flex items-center gap-2">
-                            <input type="number" id="doubleStake" min="0" step="50" placeholder="Optional Stake (Min 100)" oninput="autoSavePicks()" class="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white font-mono">
+                            <input type="number" id="doubleStake" min="0" step="50" placeholder="Optional Quantity (Min 100)" oninput="autoSavePicks()" class="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white font-mono">
                             <span class="text-xs text-slate-400 font-bold">pts</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Treble Bet Card -->
+                <!-- Treble Card -->
                 <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-bold text-sm text-slate-200"><i class="fa-solid fa-dice-three text-amber-400 mr-1"></i> Treble Bet</span>
+                        <span class="font-bold text-sm text-slate-200"><i class="fa-solid fa-dice-three text-amber-400 mr-1"></i> Treble</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-xs">
                         <div>
@@ -267,9 +273,9 @@
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 font-semibold block mb-1">Stake:</label>
+                        <label class="text-xs text-slate-400 font-semibold block mb-1">Quantity:</label>
                         <div class="flex items-center gap-2">
-                            <input type="number" id="trebleStake" min="0" step="50" placeholder="Optional Stake (Min 100)" oninput="autoSavePicks()" class="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white font-mono">
+                            <input type="number" id="trebleStake" min="0" step="50" placeholder="Optional Quantity (Min 100)" oninput="autoSavePicks()" class="flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white font-mono">
                             <span class="text-xs text-slate-400 font-bold">pts</span>
                         </div>
                     </div>
@@ -331,6 +337,45 @@
         <!-- DYNAMIC TABLES & CARDS FOR STABLES / JOCKEYS -->
         <div id="stablesContainer" class="space-y-6">
             <!-- Injected via JS -->
+        </div>
+    </section>
+
+    <!-- VIEW: RACE ANALYSIS (best chance & main danger per race) -->
+    <section id="view-analysis" class="tab-content hidden space-y-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+            <h2 class="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-bullseye text-amber-400"></i> Race Analysis: Best Chance &amp; Main Danger
+            </h2>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                For every race of the selected meeting, see which horse has the best chance and which runner is its main danger. Chances are the win probabilities calculated from the market, the same ones shown on the Racecard. Change the meeting from the <strong>Racecard</strong> tab selector.
+            </p>
+            <p class="text-xs text-amber-400 mt-2 font-bold">Meeting: <span id="analysisMeetingName">-</span></p>
+        </div>
+        <div id="analysisSummary"></div>
+        <div id="analysisContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+    </section>
+
+    <!-- VIEW: ODDS EVOLUTION (external page, logo removed) -->
+    <section id="view-oddsevo" class="tab-content hidden space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+            <h2 class="text-lg font-bold text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-trend-up text-amber-400"></i> Odds Evolution
+            </h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Weekly odds evolution from Thursday to race day.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <label for="oddsEvoFile" class="text-sm font-bold text-slate-300 whitespace-nowrap">Page:</label>
+                <select id="oddsEvoFile" onchange="loadOddsEvolution()" class="w-full sm:w-72 bg-slate-950 border border-slate-700 text-white text-sm rounded-lg p-2.5 font-semibold"></select>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="loadOddsEvolution()" class="px-3 py-2 rounded-lg text-xs font-bold bg-slate-800 text-slate-200 hover:bg-slate-700"><i class="fa-solid fa-rotate mr-1"></i> Reload</button>
+                <a id="oddsEvoOpen" href="#" target="_blank" rel="noopener" class="px-3 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950"><i class="fa-solid fa-up-right-from-square mr-1"></i> Open full page</a>
+            </div>
+        </div>
+        <div id="oddsEvoStatus" class="text-xs text-slate-400"></div>
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
+            <iframe id="oddsEvoFrame" title="Odds Evolution" class="w-full" style="height: 85vh; border: 0;" sandbox="allow-scripts allow-popups"></iframe>
         </div>
     </section>
 
@@ -418,7 +463,7 @@
 
         <div class="bg-amber-950/20 border border-amber-500/30 rounded-2xl p-5 max-w-4xl mx-auto text-xs text-amber-200/90 leading-relaxed space-y-1.5">
             <p class="font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Please read: what this is (and isn't)</p>
-            <p>This is a free, private prediction game for a closed group of friends. The 5,000 "points" are notional only &mdash; they have no cash value, cannot be bought or cashed out, and are not redeemable for money or anything of value. No entry fee is charged and no real wagers are placed. This site is not operated, endorsed, or licensed by any turf club, racing authority, or gambling regulator, and it is not a betting or gaming service. See the full <button onclick="switchTab('guide'); document.getElementById('termsSection').scrollIntoView({behavior:'smooth'});" class="underline font-bold text-amber-400">Terms &amp; Conditions</button> below for details.</p>
+            <p>This is a free, private prediction game for a closed group of friends. The 5,000 "points" are notional only &mdash; they have no cash value, cannot be bought or cashed out, and are not redeemable for money or anything of value. No entry fee is charged and no real wagers are placed. This site is not operated, endorsed, or licensed by any turf club, racing authority, or gambling regulator, and it is not a gaming service. See the full <button onclick="switchTab('guide'); document.getElementById('termsSection').scrollIntoView({behavior:'smooth'});" class="underline font-bold text-amber-400">Terms &amp; Conditions</button> below for details.</p>
         </div>
 
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 max-w-4xl mx-auto shadow-xl">
@@ -426,7 +471,7 @@
                 <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
                     <h3 class="font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-sack-dollar"></i> 5,000 Points Bankroll & Auto-Save</h3>
                     <p class="text-xs leading-relaxed text-slate-400">
-                        For every race meeting, tipsters get exactly <strong>5,000 virtual points</strong> to allocate. Mandatory min stake is <strong>100 points per race</strong>. Every selection auto-saves instantly.
+                        For every race meeting, tipsters get exactly <strong>5,000 virtual points</strong> to allocate. Mandatory min quantity is <strong>100 points per race</strong>. Every selection auto-saves instantly.
                     </p>
                 </div>
 
@@ -440,7 +485,7 @@
                 <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
                     <h3 class="font-bold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Tote Odds & Dead Heats</h3>
                     <p class="text-xs leading-relaxed text-slate-400">
-                        Points returned = <code class="text-emerald-400 font-mono">Stake × Final Tote Odds</code>. In a Dead Heat, returns are split equally between winning selections.
+                        Points returned = <code class="text-emerald-400 font-mono">Quantity × Final Tote Odds</code>. In a Dead Heat, returns are split equally between winning selections.
                     </p>
                 </div>
 
@@ -468,7 +513,7 @@
             <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
                 <div>
                     <p class="font-bold text-amber-400">1. What this is</p>
-                    <p class="text-slate-400">This is a free, private prediction game built for a closed circle of friends to compare horse racing picks against each other for fun. It is a social leaderboard, not a gambling or betting product.</p>
+                    <p class="text-slate-400">This is a free, private prediction game built for a closed circle of friends to compare horse racing picks against each other for fun. It is a social leaderboard, not a gambling product.</p>
                 </div>
                 <div>
                     <p class="font-bold text-amber-400">2. No real money</p>
@@ -476,7 +521,7 @@
                 </div>
                 <div>
                     <p class="font-bold text-amber-400">3. Scoring logic</p>
-                    <p class="text-slate-400">Correct single picks score <code class="text-emerald-400 font-mono">Stake &times; Final Tote Odds</code>. Optional Doubles/Trebles multiply the odds of each correct leg. Dead-heat winners split returns equally. Incorrect or unsettled picks score zero.</p>
+                    <p class="text-slate-400">Correct single picks score <code class="text-emerald-400 font-mono">Quantity &times; Final Tote Odds</code>. Optional Doubles/Trebles multiply the odds of each correct leg. Dead-heat winners split returns equally. Incorrect or unsettled picks score zero.</p>
                 </div>
                 <div>
                     <p class="font-bold text-amber-400">4. Accounts &amp; access</p>
@@ -762,7 +807,7 @@ create policy "Update app_state" on app_state for update using (true);</pre>
         </div>
 
         <div class="text-[11px] leading-relaxed text-slate-500 text-center max-w-3xl mx-auto">
-            For entertainment purposes only, among a private group of friends. All points are notional, have no cash value, and cannot be purchased, redeemed, cashed out, or exchanged for money or prizes of value. No real bets are placed and no money changes hands through this app. Not affiliated with, endorsed by, or operated by any turf club, racing authority, or gambling regulator. Race data is used here only for private, non-commercial reference by this friend group. See <button onclick="switchTab('guide'); setTimeout(()=>document.getElementById('termsSection').scrollIntoView({behavior:'smooth'}), 50);" class="underline text-slate-400 hover:text-amber-400">Terms &amp; Conditions</button>.
+            For entertainment purposes only, among a private group of friends. All points are notional, have no cash value, and cannot be purchased, redeemed, cashed out, or exchanged for money or prizes of value. No real money is wagered and no money changes hands through this app. Not affiliated with, endorsed by, or operated by any turf club, racing authority, or gambling regulator. Race data is used here only for private, non-commercial reference by this friend group. See <button onclick="switchTab('guide'); setTimeout(()=>document.getElementById('termsSection').scrollIntoView({behavior:'smooth'}), 50);" class="underline text-slate-400 hover:text-amber-400">Terms &amp; Conditions</button>.
         </div>
 
         <div class="text-center text-[11px] text-slate-600">&copy; 2026 Nikhil S. Beersing. Horse Racing Tipster Challenge.</div>
@@ -1119,6 +1164,7 @@ create policy "Update app_state" on app_state for update using (true);</pre>
     function onMeetingChange() {
         renderRaces();
         renderStablesAndJockeys();
+        renderRaceAnalysis();
         renderAdminSettleList();
         renderAdminAccordion();
         updateDeleteMeetingPreview();
@@ -1245,11 +1291,11 @@ create policy "Update app_state" on app_state for update using (true);</pre>
                     </table>
                 </div>
 
-                <!-- DIRECT STAKE CONTROL WITH QUICK OPTIONS -->
+                <!-- DIRECT QUANTITY CONTROL WITH QUICK OPTIONS -->
                 <div class="bg-slate-950 p-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center space-x-2">
                         <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-coins text-amber-400"></i> Stake:
+                            <i class="fa-solid fa-coins text-amber-400"></i> Quantity:
                         </span>
                         <input type="number" id="stake_${race.id}" min="100" step="50" value="${racePick.stake || 100}" 
                             ${isLocked || !currentUser ? 'disabled' : ''} 
@@ -1258,7 +1304,7 @@ create policy "Update app_state" on app_state for update using (true);</pre>
                         <span class="text-xs font-bold text-slate-400">pts</span>
                     </div>
 
-                    <!-- Quick Stake Chips -->
+                    <!-- Quick Quantity Chips -->
                     <div class="flex items-center gap-1.5 flex-wrap">
                         <span class="text-[11px] text-slate-400 font-semibold mr-1">Quick Select:</span>
                         <button type="button" onclick="setQuickStake('${race.id}', 100)" ${isLocked || !currentUser ? 'disabled' : ''} class="text-xs bg-slate-900 hover:bg-slate-800 active:bg-amber-500 active:text-slate-950 text-slate-200 border border-slate-700 font-bold px-2.5 py-1 rounded-md transition">100</button>
@@ -1277,9 +1323,9 @@ create policy "Update app_state" on app_state for update using (true);</pre>
     }
 
     // Rebuilds the Double/Treble horse dropdowns for the active meeting AND restores
-    // any previously saved combo-bet selections and stakes (savedDouble / savedTreble).
+    // any previously saved combo selections and quantities (savedDouble / savedTreble).
     // Without restoring these, any later autosave (e.g. picking a single) would read the
-    // now-blank form fields and silently overwrite the saved combo bet with empty values
+    // now-blank form fields and silently overwrite the saved combo with empty values
     // — which is why doubles/trebles were not accounting into the leaderboard.
     function populateExoticOptions(races, savedDouble, savedTreble) {
         ['doubleLeg1', 'doubleLeg2', 'trebleLeg1', 'trebleLeg2', 'trebleLeg3'].forEach(legId => {
@@ -1739,7 +1785,7 @@ create policy "Update app_state" on app_state for update using (true);</pre>
                         <div class="text-sm font-bold text-white">${runner ? `#${runner.no} ${runner.horse}` : 'No Selection'}</div>
                     </div>
                     <div class="text-right">
-                        <div class="text-xs text-slate-400 font-mono">Stake: ${pick ? pick.stake : 0} pts</div>
+                        <div class="text-xs text-slate-400 font-mono">Quantity: ${pick ? pick.stake : 0} pts</div>
                     </div>
                 </div>
                 `;
@@ -2268,6 +2314,135 @@ create policy "Update app_state" on app_state for update using (true);</pre>
         showToast(`Account ${username} created!`, 'success');
     }
 
+    // ===== RACE ANALYSIS: best chance + main danger per race =====
+    function renderRaceAnalysis() {
+        const sel = document.getElementById('meetingSelect');
+        const container = document.getElementById('analysisContainer');
+        const summary = document.getElementById('analysisSummary');
+        if (!sel || !container) return;
+        const meetingId = sel.value;
+        const meeting = appState.meetings.find(m => m.id === meetingId);
+        document.getElementById('analysisMeetingName').textContent = meeting ? meeting.name : '-';
+
+        const races = appState.races.filter(r => r.meetingId === meetingId).sort((a, b) => a.raceNumber - b.raceNumber);
+        if (races.length === 0) {
+            summary.innerHTML = '';
+            container.innerHTML = `<div class="lg:col-span-2 p-6 text-center text-slate-500 font-bold bg-slate-900 border border-slate-800 rounded-2xl">No races available for analysis.</div>`;
+            return;
+        }
+
+        const rows = races.map(race => {
+            const ranked = calculateRunnerProbabilities(race.runners || []).sort((a, b) => b.probPct - a.probPct);
+            return { race, ranked, best: ranked[0], danger: ranked[1], third: ranked[2] };
+        });
+
+        const gapLabel = gap => gap >= 10 ? ['Clear favourite', 'text-emerald-400 border-emerald-800 bg-emerald-950'] :
+                                gap >= 5  ? ['Good chance', 'text-amber-400 border-amber-800 bg-amber-950'] :
+                                            ['Open race', 'text-rose-400 border-rose-800 bg-rose-950'];
+
+        // Summary table
+        summary.innerHTML = `
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-950 text-xs uppercase text-slate-400">
+                            <tr><th class="p-3">Race</th><th class="p-3">Best chance</th><th class="p-3">Main danger</th></tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            ${rows.map(r => `
+                                <tr>
+                                    <td class="p-3 font-bold text-amber-400 whitespace-nowrap">Race ${r.race.raceNumber}</td>
+                                    <td class="p-3 text-slate-100">${r.best ? `<span class="font-bold">${r.best.no}. ${r.best.horse}</span> <span class="text-emerald-400 font-mono text-xs">${r.best.probPct}%</span>` : '-'}</td>
+                                    <td class="p-3 text-slate-300">${r.danger ? `${r.danger.no}. ${r.danger.horse} <span class="text-rose-400 font-mono text-xs">${r.danger.probPct}%</span>` : '-'}</td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>`;
+
+        // Detailed cards
+        container.innerHTML = rows.map(({ race, best, danger, third }) => {
+            if (!best) return '';
+            const gap = danger ? +(best.probPct - danger.probPct).toFixed(1) : best.probPct;
+            const [lbl, cls] = gapLabel(gap);
+            const winners = race.winners || [];
+            const settled = race.status === 'FINISHED';
+            const mark = h => settled && winners.includes(h.no)
+                ? `<span class="ml-2 bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-2 py-0.5 rounded font-bold">WON</span>` : '';
+            const runnerBox = (h, title, color, icon) => h ? `
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1.5">
+                    <div class="text-[10px] uppercase tracking-wider font-black ${color} flex items-center gap-1.5"><i class="fa-solid ${icon}"></i> ${title}</div>
+                    <div class="text-white font-bold text-base">${h.no}. ${h.horse}${mark(h)}</div>
+                    <div class="text-xs text-slate-400">Jockey: <span class="text-slate-200">${h.jockey || '-'}</span> | Stable: <span class="text-slate-200">${h.trainer || '-'}</span></div>
+                    <div class="text-xs text-slate-400">Draw ${h.draw ?? '-'} | ${h.weight ?? '-'}kg ${h.allowance ? `(${h.allowance})` : ''} | Rating ${h.rating ?? '-'}</div>
+                    <div class="flex items-center gap-2 pt-1">
+                        <div class="flex-1 bg-slate-800 h-2 rounded-full"><div class="h-2 rounded-full ${color.includes('emerald') ? 'bg-emerald-400' : 'bg-rose-400'}" style="width:${Math.min(100, h.probPct)}%"></div></div>
+                        <span class="text-xs font-bold font-mono ${color}">${h.probPct}%</span>
+                    </div>
+                </div>` : '';
+            return `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg">RACE ${race.raceNumber}</span>
+                            <span class="text-xs text-slate-300 font-semibold">${race.distance || ''} ${race.raceClass ? '• ' + race.raceClass : ''}</span>
+                        </div>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded border ${cls}">${lbl}${danger ? ` (+${gap} pts)` : ''}</span>
+                    </div>
+                    ${runnerBox(best, 'Best chance', 'text-emerald-400', 'fa-trophy')}
+                    ${runnerBox(danger, 'Main danger', 'text-rose-400', 'fa-triangle-exclamation')}
+                    ${third ? `<div class="text-xs text-slate-500">Next in line: <span class="text-slate-300">${third.no}. ${third.horse}</span> <span class="font-mono">${third.probPct}%</span></div>` : ''}
+                </div>`;
+        }).join('');
+    }
+
+    // ===== ODDS EVOLUTION (external pages, logo stripped) =====
+    const ODDS_EVO = {
+        base: 'https://zotturf.github.io/evolution-odds/',
+        files: [
+            ['Meeting2026OddsEvolution.html', 'Meeting odds evolution'],
+            ['Meeting2026OddsEvolution_Sunday.html', 'Sunday meeting'],
+            ['Meeting2026OddsEvolution_MaidenCup.html', 'Maiden Cup'],
+            ['odds_evolution_zot_turf_NewFormat.html', 'New format']
+        ]
+    };
+    let oddsEvoLoadedOnce = false;
+
+    function initOddsEvolutionSelect() {
+        const sel = document.getElementById('oddsEvoFile');
+        if (sel && !sel.options.length) {
+            sel.innerHTML = ODDS_EVO.files.map(f => `<option value="${f[0]}">${f[1]}</option>`).join('');
+        }
+    }
+
+    async function loadOddsEvolution() {
+        initOddsEvolutionSelect();
+        const file = document.getElementById('oddsEvoFile').value;
+        const url = ODDS_EVO.base + file;
+        const frame = document.getElementById('oddsEvoFrame');
+        const status = document.getElementById('oddsEvoStatus');
+        document.getElementById('oddsEvoOpen').href = url;
+        status.textContent = 'Loading...';
+        oddsEvoLoadedOnce = true;
+        try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            let html = await res.text();
+            // remove logo / header images and keep relative assets (horse silks) working
+            html = html.replace(/<img[^>]*(zot_logo|header\.png)[^>]*>/gi, '');
+            const hideLogo = '<base href="' + ODDS_EVO.base + '"><style>img[src*="zot_logo"],img[src*="header"]{display:none!important}</style>';
+            html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, m => m + hideLogo) : hideLogo + html;
+            frame.removeAttribute('src');
+            frame.srcdoc = html;
+            status.textContent = '';
+        } catch (err) {
+            console.error('Odds evolution load failed:', err);
+            frame.removeAttribute('srcdoc');
+            frame.src = url;
+            status.textContent = 'Could not load the page in clean mode, showing the original page instead (logo may be visible).';
+        }
+    }
+
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('.tab-btn').forEach(el => {
@@ -2284,6 +2459,10 @@ create policy "Update app_state" on app_state for update using (true);</pre>
 
         if (tabId === 'stables') {
             renderStablesAndJockeys();
+        } else if (tabId === 'analysis') {
+            renderRaceAnalysis();
+        } else if (tabId === 'oddsevo') {
+            if (!oddsEvoLoadedOnce) loadOddsEvolution();
         } else if (tabId === 'admin') {
             renderAdminSettleList();
             renderAdminAccordion();
